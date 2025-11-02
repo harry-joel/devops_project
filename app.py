@@ -6,7 +6,9 @@ import os
 app = Flask(__name__)
 app.secret_key = 'supersecretkey'
 
+# --------------------------------------------
 # Database setup
+# --------------------------------------------
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///feedback.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -25,11 +27,19 @@ class Feedback(db.Model):
 # --------------------------------------------
 # Routes
 # --------------------------------------------
+
+# Home Page - Display all feedback
 @app.route('/')
 def index():
     feedbacks = Feedback.query.order_by(Feedback.created_at.desc()).all()
     return render_template('index.html', feedbacks=feedbacks)
 
+# Show feedback form (GET)
+@app.route('/feedback', methods=['GET'])
+def show_feedback_form():
+    return render_template('feedback.html')
+
+# Handle feedback submission (POST)
 @app.route('/feedback', methods=['POST'])
 def feedback():
     name = request.form.get('name', '').strip()
@@ -38,7 +48,7 @@ def feedback():
 
     if not rating_str.isdigit():
         flash("Please select a valid rating before submitting!", "danger")
-        return redirect(url_for('index'))
+        return redirect(url_for('show_feedback_form'))
 
     rating = int(rating_str)
     fb = Feedback(name=name or "Anonymous", rating=rating, comment=comment)
@@ -47,6 +57,7 @@ def feedback():
     flash("Thank you for your feedback!", "success")
     return redirect(url_for('index'))
 
+# Delete specific feedback
 @app.route('/delete/<int:feedback_id>', methods=['POST'])
 def delete_feedback(feedback_id):
     fb = db.session.get(Feedback, feedback_id)
@@ -58,6 +69,7 @@ def delete_feedback(feedback_id):
         flash("Feedback not found.", "warning")
     return redirect(url_for('index'))
 
+# Reset all feedback
 @app.route('/reset', methods=['POST'])
 def reset_feedback():
     db.session.query(Feedback).delete()
@@ -66,9 +78,8 @@ def reset_feedback():
     return redirect(url_for('index'))
 
 # --------------------------------------------
-# Run server
+# Run Server
 # --------------------------------------------
-# Auto-create tables if they don't exist
 with app.app_context():
     db.create_all()
 
