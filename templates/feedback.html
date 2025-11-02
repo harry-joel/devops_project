@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="text-center mb-4">Submit Your Feedback</h2>
+<form method="POST" class="card p-4 shadow-sm border-0 mx-auto" style="max-width: 600px;">
+    <div class="mb-3">
+        <label class="form-label">Name (optional)</label>
+        <input type="text" class="form-control" name="name">
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Email (optional)</label>
+        <input type="email" class="form-control" name="email">
+    </div>
+    <div class="mb-3 text-center">
+        <label class="form-label d-block mb-2">Star Rating</label>
+        <div id="stars" class="text-warning fs-3"></div>
+        <input type="hidden" name="rating" id="rating">
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Comment</label>
+        <textarea name="comment" class="form-control" required></textarea>
+    </div>
+    <div class="text-center">
+        <button type="submit" class="btn btn-primary px-4">Submit</button>
+    </div>
+</form>
+<script src="{{ url_for('static', filename='star.js') }}"></script>
+{% endblock %}
