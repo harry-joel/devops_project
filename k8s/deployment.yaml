@@ -1,0 +1,25 @@
+﻿apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: feedback-app
+  labels:
+    app: feedback-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: feedback-app
+  template:
+    metadata:
+      labels:
+        app: feedback-app
+    spec:
+      containers:
+        - name: feedback-container
+          image: harryjoel1553/flask-feedback	 
+          ports:
+            - containerPort: 5000
+          env:
+            - name: FLASK_ENV
+              value: "production"
+          imagePullPolicy: Always
